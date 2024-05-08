@@ -27,6 +27,7 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import WatchOutlinedIcon from "@mui/icons-material/WatchOutlined";
 import VolunteerActivismOutlinedIcon from "@mui/icons-material/VolunteerActivismOutlined";
 import LocalAtmOutlinedIcon from "@mui/icons-material/LocalAtmOutlined";
+import ProtectedRoute from "@/components/ProtectedRoute";
 const Accordion = muiStyled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
 ))(({ theme }) => ({
@@ -331,5 +332,8 @@ const FlightlistPage = () => {
     </Container>
   );
 };
-
-export default FlightlistPage;
+export default () => (
+  <ProtectedRoute>
+    <FlightlistPage />
+  </ProtectedRoute>
+);

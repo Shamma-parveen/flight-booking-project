@@ -24,6 +24,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import styled from "@emotion/styled";
 import TravellerPopper from "@/components/TravellerPopper";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 const preferredClasses: string[] = [
   "Economy",
@@ -129,7 +130,11 @@ const SearchFlightPage = () => {
                 // onChange={handleChange}
               >
                 {preferredClasses.map((classValue) => {
-                  return <MenuItem value={classValue}>{classValue}</MenuItem>;
+                  return (
+                    <MenuItem key={classValue} value={classValue}>
+                      {classValue}
+                    </MenuItem>
+                  );
                 })}
               </Select>
             </Grid>
@@ -143,4 +148,8 @@ const SearchFlightPage = () => {
   );
 };
 
-export default SearchFlightPage;
+export default () => (
+  <ProtectedRoute>
+    <SearchFlightPage />
+  </ProtectedRoute>
+);
