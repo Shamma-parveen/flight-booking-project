@@ -15,6 +15,27 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
+import * as yup from "yup";
+import { Controller, useForm } from "react-hook-form";
+import validationText from "../../../json/messages/validationText";
+import { yupResolver } from "@hookform/resolvers/yup";
+
+
+
+
+const schema = yup.object().shape({
+  email: yup
+    .string()
+    .trim()
+    .required(validationText.error.email_required)
+    .email(validationText.error.email_format),
+
+  password: yup
+    .string()
+    .trim()
+    .required(validationText.error.enter_password)
+});
+
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -24,6 +45,8 @@ const LoginPage = () => {
   ) => {
     event.preventDefault();
   };
+
+  
   return (
     <Wrapper>
       <Container sx={{ maxWidth: "600px" }}>
