@@ -42,16 +42,51 @@ const TravellerCounter: React.FC<CounterProps> = ({
 };
 interface Props {
   onDone?: () => void;
+  totalAdults: number;
+  totalChilds: number;
+  totalInfants: number;
+  onAdultIncrement?: () => void;
+  onAdultDecrement?: () => void;
+  onChildIncrement?: () => void;
+  onChildDecrement?: () => void;
+  onInfantIncrement?: () => void;
+  onInfantDecrement?: () => void;
 }
-const TravellerPopper: React.FC<Props> = ({ onDone }) => {
+const TravellerPopper: React.FC<Props> = ({
+  onDone,
+  totalAdults,
+  totalChilds,
+  totalInfants,
+  onAdultIncrement,
+  onAdultDecrement,
+  onChildDecrement,
+  onChildIncrement,
+  onInfantDecrement,
+  onInfantIncrement,
+}) => {
   return (
     <Container>
       <Typography fontWeight="bold">Travellers</Typography>
-      <TravellerCounter title="Adults" count={1} />
+      <TravellerCounter
+        title="Adults"
+        count={totalAdults}
+        onIncrement={onAdultIncrement}
+        onDecrement={onAdultDecrement}
+      />
       <Divider />
-      <TravellerCounter title="Children(3-12yrs)" count={0} />
+      <TravellerCounter
+        title="Children(3-12yrs)"
+        count={totalChilds}
+        onIncrement={onChildIncrement}
+        onDecrement={onChildDecrement}
+      />
       <Divider />
-      <TravellerCounter title="Infant(0-2yrs)" count={0} />
+      <TravellerCounter
+        title="Infant(0-2yrs)"
+        count={totalInfants}
+        onIncrement={onInfantIncrement}
+        onDecrement={onInfantDecrement}
+      />
       <Divider />
       <Button fullWidth variant="contained" onClick={onDone}>
         Done
