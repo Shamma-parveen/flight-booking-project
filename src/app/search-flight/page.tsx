@@ -96,7 +96,7 @@ const SearchFlightPage = () => {
   const [flyingFromSearchKey, setFlyingFromSearchKey] = useState("");
   const handleFlyingFromSearchKey = debounce((newSearchKey: string) => {
     setFlyingFromSearchKey(newSearchKey);
-  }, 500);
+  }, 300);
   const { data: rawFlyingFromAirports } = useQuery({
     queryKey: ["flyingFromSearchAirport", flyingFromSearchKey],
     queryFn: () => searchAirport({ search_key: flyingFromSearchKey }),
@@ -108,7 +108,7 @@ const SearchFlightPage = () => {
   const [flyingToSearchKey, setFlyingToSearchKey] = useState("");
   const handleFlyingToSearchKey = debounce((newSearchKey: string) => {
     setFlyingToSearchKey(newSearchKey);
-  }, 500);
+  }, 300);
   const { data: rawFlyingToAirports } = useQuery({
     queryKey: ["flyingToSearchAirport", flyingToSearchKey],
     queryFn: () => searchAirport({ search_key: flyingToSearchKey }),

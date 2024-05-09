@@ -2,6 +2,7 @@ import { useAppSelector } from "@/store";
 import { authSelectors } from "@/store/slices/authSlice";
 import { useRouter } from "next/navigation";
 import React, { FC, useEffect } from "react";
+import FullPageLoader from "./FullPageLoader";
 interface Props {
   children: React.ReactNode;
   redirectUrl: string;
@@ -14,7 +15,7 @@ const AuthRoute: FC<Props> = ({ children, redirectUrl }) => {
       router.replace(redirectUrl);
     }
   }, [isAuthenticated]);
-  return isAuthenticated ? <div>Loading...</div> : <>{children}</>;
+  return isAuthenticated ? <FullPageLoader /> : <>{children}</>;
 };
 
 export default AuthRoute;

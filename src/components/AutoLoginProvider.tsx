@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from "@/store";
 import { authActions, authSelectors } from "@/store/slices/authSlice";
 import AuthTokenData from "@/utils/AuthTokenData";
 import React, { FC, useEffect } from "react";
+import FullPageLoader from "./FullPageLoader";
 interface Props {
   children: React.ReactNode;
 }
@@ -17,7 +18,7 @@ const AutoLoginProvider: FC<Props> = ({ children }) => {
       dispatch(authActions.logout());
     }
   }, []);
-  return isInitilized ? <>{children}</> : <div>Loading...</div>;
+  return isInitilized ? <>{children}</> : <FullPageLoader />;
 };
 
 export default AutoLoginProvider;

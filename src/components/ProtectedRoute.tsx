@@ -4,6 +4,7 @@ import { useAppSelector } from "@/store";
 import { authSelectors } from "@/store/slices/authSlice";
 import { useRouter } from "next/navigation";
 import React, { FC, useEffect } from "react";
+import FullPageLoader from "./FullPageLoader";
 interface Props {
   children: React.ReactNode;
 }
@@ -15,7 +16,7 @@ const ProtectedRoute: FC<Props> = ({ children }) => {
       router.replace(RoutePaths.login());
     }
   }, [isAuthenticated]);
-  return isAuthenticated ? <>{children}</> : <div>Loading...</div>;
+  return isAuthenticated ? <>{children}</> : <FullPageLoader />;
 };
 
 export default ProtectedRoute;

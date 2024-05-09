@@ -75,7 +75,6 @@ const LoginPage = () => {
       },
     });
   };
-
   return (
     <Wrapper>
       <Container sx={{ maxWidth: "600px" }}>

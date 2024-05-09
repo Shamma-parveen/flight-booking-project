@@ -34,6 +34,7 @@ import { useRouter } from "next/navigation";
 import RoutePaths from "@/config/routePaths";
 import { IFlight } from "@/services/searchFlight";
 import formatFlyingTime from "@/utils/formatFlyingTime";
+import FullPageLoader from "@/components/FullPageLoader";
 const Accordion = muiStyled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
 ))(({ theme }) => ({
@@ -145,7 +146,7 @@ const BookingAccordion: FC<BookingAccordionProps> = ({
   onClick,
 }) => {
   return (
-    <Accordion onClick={onClick} expanded={isExpanded}>
+    <Accordion onChange={onClick} expanded={isExpanded}>
       <AccordionSummary>
         <AccordionSummaryContainer>
           <AccordionSummaryHeaderDetailsContainer>
@@ -357,7 +358,7 @@ const FlightlistPage = () => {
     }
   }, [searchFlightData]);
   if (!searchFlightData) {
-    return <div>Loading..</div>;
+    return <FullPageLoader />;
   }
   return (
     <Container>
