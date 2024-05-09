@@ -7,6 +7,7 @@ import QueryProvider from "@/components/QueryProvider";
 import AlertProvider from "@/components/AlertProvider";
 import StoreProvider from "@/components/StoreProvider";
 import AutoLoginProvider from "@/components/AutoLoginProvider";
+import FlightDetailsProvider from "@/components/FlightDetailsProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,8 +28,10 @@ export default function RootLayout({
             <AlertProvider>
               <StoreProvider>
                 <AutoLoginProvider>
-                  <Header />
-                  {children}
+                  <FlightDetailsProvider>
+                    <Header />
+                    {children}
+                  </FlightDetailsProvider>
                 </AutoLoginProvider>
               </StoreProvider>
             </AlertProvider>

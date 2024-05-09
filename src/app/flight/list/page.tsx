@@ -16,18 +16,24 @@ import {
 import MuiAccordion from "@mui/material/Accordion";
 import MuiAccordionSummary from "@mui/material/AccordionSummary";
 import MuiAccordionDetails from "@mui/material/AccordionDetails";
-import React from "react";
+import React, { FC, useContext, useEffect, useState } from "react";
 import styled from "@emotion/styled";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import TrendingFlatIcon from "@mui/icons-material/TrendingFlat";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+// import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import FlightIcon from "@mui/icons-material/Flight";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import WatchOutlinedIcon from "@mui/icons-material/WatchOutlined";
 import VolunteerActivismOutlinedIcon from "@mui/icons-material/VolunteerActivismOutlined";
 import LocalAtmOutlinedIcon from "@mui/icons-material/LocalAtmOutlined";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import { FlightDetailsContext } from "@/components/FlightDetailsProvider";
+import { useRouter } from "next/navigation";
+import RoutePaths from "@/config/routePaths";
+import { IFlight } from "@/services/searchFlight";
+import formatFlyingTime from "@/utils/formatFlyingTime";
 const Accordion = muiStyled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
 ))(({ theme }) => ({
@@ -74,7 +80,7 @@ const Container = styled(Box)`
   padding: 20px;
   width: 100%;
   box-sizing: border-box;
-  max-width: 850px;
+  max-width: 1000px;
   margin: auto;
 `;
 interface AirportDetailsProps {
@@ -126,9 +132,20 @@ const AccordionSummaryHeaderArrowContainer = styled(Box)`
 const AccordionDetailsContainer = styled(Box)`
   padding: 10px 20px;
 `;
-const BookingAccordion = () => {
+interface BookingAccordionProps {
+  onBook?: () => void;
+  flight: IFlight;
+  isExpanded?: boolean;
+  onClick?: () => void;
+}
+const BookingAccordion: FC<BookingAccordionProps> = ({
+  onBook,
+  flight,
+  isExpanded,
+  onClick,
+}) => {
   return (
-    <Accordion>
+    <Accordion onClick={onClick} expanded={isExpanded}>
       <AccordionSummary>
         <AccordionSummaryContainer>
           <AccordionSummaryHeaderDetailsContainer>
@@ -143,21 +160,21 @@ const BookingAccordion = () => {
                 </Avatar>
                 <Stack direction="column">
                   <Typography fontWeight="bold" fontSize="13px">
-                    $ 81.91
+                    {flight.priceSymbol} {flight.totalPrice.toFixed(2)}
                   </Typography>
                   <Typography variant="caption" fontSize={"11px"}>
-                    incl $ 13.68 Tax
+                    incl {flight.priceSymbol} {flight.totalTax.toFixed(2)} Tax
                   </Typography>
                 </Stack>
               </Stack>
               <Divider orientation="vertical" />
-              <Typography fontWeight="bold">UK</Typography>
+              <Typography fontWeight="bold">{flight.airlineIata}</Typography>
               <Stack direction="column" gap={1}>
                 <Typography fontWeight="bold" fontSize="13px">
                   Duration
                 </Typography>
                 <Typography variant="caption" fontSize={"11px"}>
-                  2 hours 10 min
+                  {formatFlyingTime(flight.flyingTimeInMinutes)}
                 </Typography>
               </Stack>
               <Stack direction="column" gap={1}>
@@ -199,7 +216,13 @@ const BookingAccordion = () => {
             {/* <Divider orientation="vertical" /> */}
           </AccordionSummaryHeaderDetailsContainer>
           <AccordionSummaryHeaderArrowContainer>
-            <KeyboardArrowUpIcon htmlColor="white" />
+            <KeyboardArrowDownIcon
+              htmlColor="white"
+              sx={{
+                transform: `rotate(${isExpanded ? 180 : 0}deg)`,
+                transition: "transform 0.3s ease-in-out",
+              }}
+            />
           </AccordionSummaryHeaderArrowContainer>
         </AccordionSummaryContainer>
       </AccordionSummary>
@@ -216,58 +239,80 @@ const BookingAccordion = () => {
                 Choose Your Preferred Plan
               </Typography>
               <Divider />
-              <Stack
-                direction="row"
-                justifyContent="space-between"
-                alignItems="center"
-                sx={{ padding: "20px 0px" }}
-              >
-                <Stack direction="column">
-                  <Typography fontWeight="bold" fontSize="14px">
-                    UK 708 Wed 8th May
-                  </Typography>
-                  <Typography
-                    variant="caption"
-                    sx={{ color: "gray", fontSize: "12px" }}
-                  >
-                    Vistara
-                  </Typography>
-                </Stack>
-                <Stack direction="column">
-                  <Typography fontWeight="bold" fontSize="14px">
-                    CCU - DEL
-                  </Typography>
-                  <Typography fontWeight="bold" fontSize="14px">
-                    20:30 - 22:40
-                  </Typography>
-                </Stack>
-                <Stack direction="column">
-                  <Typography fontWeight="bold" fontSize="14px">
-                    2 hours 10 mins
-                  </Typography>
-                </Stack>
-                <Stack direction="column">
-                  <Typography fontWeight="bold" fontSize="14px">
-                    V/ECONOMY
-                  </Typography>
-                </Stack>
-                <Stack direction="column">
-                  <Typography
-                    variant="caption"
-                    fontSize="12px"
-                    sx={{ maxWidth: "100px" }}
-                  >
-                    Total time travel 2 hours 10 mins
-                  </Typography>
-                </Stack>
-                <Divider orientation="vertical" />
-                <Radio />
-              </Stack>
-              <Divider />
+              {flight.plans.map((plan) => {
+                return (
+                  <>
+                    <Stack
+                      key={plan.flightNumber.toString()}
+                      direction="row"
+                      justifyContent="space-between"
+                      alignItems="center"
+                      sx={{ padding: "20px 0px" }}
+                    >
+                      <Stack direction="column">
+                        <Typography fontWeight="bold" fontSize="14px">
+                          {plan.airLineIata} {plan.flightNumber}{" "}
+                          {plan.departureDate.toDateString()}
+                        </Typography>
+                        <Typography
+                          variant="caption"
+                          sx={{ color: "gray", fontSize: "12px" }}
+                        >
+                          {plan.airLineName}
+                        </Typography>
+                      </Stack>
+                      <Stack direction="column">
+                        <Typography fontWeight="bold" fontSize="14px">
+                          {plan.departureIata} - {plan.destinationIata}
+                        </Typography>
+                        <Typography fontWeight="bold" fontSize="14px">
+                          {plan.departureTimeOfDay.hour}:
+                          {plan.departureTimeOfDay.minute} -{" "}
+                          {plan.arrivalTimeOfDay.hour}:
+                          {plan.arrivalTimeOfDay.minute}
+                        </Typography>
+                      </Stack>
+                      <Stack direction="column">
+                        <Typography fontWeight="bold" fontSize="14px">
+                          {formatFlyingTime(plan.flyingTimeInMinutes)}
+                        </Typography>
+                      </Stack>
+                      <Stack direction="column">
+                        <Typography fontWeight="bold" fontSize="14px">
+                          {plan.bookingClassCode}/{plan.cabinClass}
+                        </Typography>
+                      </Stack>
+                      <Stack direction="column">
+                        <Typography
+                          variant="caption"
+                          fontSize="12px"
+                          sx={{ maxWidth: "100px" }}
+                        >
+                          Total time travel
+                        </Typography>
+                        <Typography
+                          variant="caption"
+                          fontSize="12px"
+                          sx={{ maxWidth: "100px" }}
+                        >
+                          {formatFlyingTime(plan.flyingTimeInMinutes)}
+                        </Typography>
+                      </Stack>
+                      <Divider orientation="vertical" />
+                      <Radio />
+                    </Stack>
+                    <Divider />
+                  </>
+                );
+              })}
             </Stack>
             <Stack direction="column" gap={1}>
               <Stack direction="row" justifyContent="center">
-                <Button variant="contained" sx={{ minWidth: "250px" }}>
+                <Button
+                  variant="contained"
+                  sx={{ minWidth: "250px" }}
+                  onClick={onBook}
+                >
                   Book Now
                 </Button>
               </Stack>
@@ -293,6 +338,27 @@ const BookingAccordion = () => {
   );
 };
 const FlightlistPage = () => {
+  const [selectedFlightId, setSelectedFlightId] = useState("");
+  const handleSelectFlightId = (flightId: string) => {
+    setSelectedFlightId((prevId) => {
+      if (prevId === flightId) {
+        return "";
+      } else {
+        return flightId;
+      }
+    });
+  };
+  const { bookNewFlight, flightList } = useContext(FlightDetailsContext);
+  const router = useRouter();
+  const { searchFlightData } = useContext(FlightDetailsContext);
+  useEffect(() => {
+    if (!searchFlightData) {
+      router.replace(RoutePaths.searchFlight());
+    }
+  }, [searchFlightData]);
+  if (!searchFlightData) {
+    return <div>Loading..</div>;
+  }
   return (
     <Container>
       <Stack direction="column" gap={2}>
@@ -314,20 +380,30 @@ const FlightlistPage = () => {
           alignItems="center"
         >
           <AirportDetailView
-            airportName="Netaji Subhash Chandra Bose International Airport (CCU), India"
+            airportName={searchFlightData.flyingFromAirport.short_name}
             title="From Station"
-            date={new Date()}
+            date={searchFlightData.departureDate}
           />
           <TrendingFlatIcon />
           <AirportDetailView
-            airportName="Netaji Subhash Chandra Bose International Airport (CCU), India"
+            airportName={searchFlightData.flyingToAirport.short_name}
             title="To Station"
-            date={new Date()}
+            date={searchFlightData.departureDate}
           />
         </Stack>
-        <BookingAccordion />
-        <BookingAccordion />
-        <BookingAccordion />
+        {flightList.length > 0 ? (
+          flightList.map((flight) => (
+            <BookingAccordion
+              key={flight.id}
+              flight={flight}
+              onBook={bookNewFlight}
+              isExpanded={flight.id === selectedFlightId}
+              onClick={() => handleSelectFlightId(flight.id)}
+            />
+          ))
+        ) : (
+          <Typography textAlign="center">No Flights Available</Typography>
+        )}
       </Stack>
     </Container>
   );

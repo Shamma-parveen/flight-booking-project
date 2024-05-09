@@ -20,7 +20,7 @@ import {
   debounce,
 } from "@mui/material";
 import SyncAltIcon from "@mui/icons-material/SyncAlt";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
@@ -32,6 +32,9 @@ import searchAirport, { IAirport } from "@/services/searchAirport";
 import dayjs from "dayjs";
 import searchFlight, { ISearchFlightBody } from "@/services/searchFlight";
 import Alert from "@/utils/Alert";
+import { useRouter } from "next/navigation";
+import { FlightDetailsContext } from "@/components/FlightDetailsProvider";
+import RoutePaths from "@/config/routePaths";
 
 const preferredClasses: string[] = [
   "Economy",
@@ -40,6 +43,9 @@ const preferredClasses: string[] = [
   "First",
 ];
 const SearchFlightPage = () => {
+  const router = useRouter();
+  const { addSearchFlightData, addFlightList } =
+    useContext(FlightDetailsContext);
   const { mutate: searchFlightMutate, isLoading: searchFlightLoading } =
     useMutation(searchFlight);
   const [classType, setClassType] = useState(preferredClasses[0]);
@@ -135,7 +141,17 @@ const SearchFlightPage = () => {
       round_year: "",
       travel_type: "oneway",
     };
-    searchFlightMutate(searchFlightBody);
+    addSearchFlightData({
+      flyingFromAirport: selectedFlyingFromAirport,
+      flyingToAirport: selectedFlyingToAirport,
+      departureDate,
+    });
+    searchFlightMutate(searchFlightBody, {
+      onSuccess: (flightList) => {
+        addFlightList(flightList);
+        router.push(RoutePaths.flightList());
+      },
+    });
   };
   return (
     <Wrapper>

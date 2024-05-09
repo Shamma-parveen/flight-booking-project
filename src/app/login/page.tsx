@@ -5,6 +5,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
   Box,
   Button,
+  CircularProgress,
   FormControl,
   IconButton,
   InputAdornment,
@@ -138,7 +139,12 @@ const LoginPage = () => {
               alignItems="center"
             >
               <Button variant="contained" type="submit" disabled={isLoading}>
-                LOGIN
+                <Stack direction="row" alignItems="center" gap={1}>
+                  {isLoading && (
+                    <CircularProgress sx={{ color: "white" }} size={20} />
+                  )}
+                  LOGIN
+                </Stack>
               </Button>
               <Typography>Forgot Password?</Typography>
             </Stack>

@@ -8,11 +8,13 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useContext } from "react";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useAppDispatch, useAppSelector } from "@/store";
 import { authActions, authSelectors } from "@/store/slices/authSlice";
+import { FlightDetailsContext } from "./FlightDetailsProvider";
 const Header = () => {
+  const { totalCartValue } = useContext(FlightDetailsContext);
   const dispatch = useAppDispatch();
   const isAuthenticated = useAppSelector(authSelectors.isAuthenticated);
   const handleLogout = () => {
@@ -28,7 +30,7 @@ const Header = () => {
           {isAuthenticated && (
             <>
               <IconButton size="large" color="inherit">
-                <Badge badgeContent={4} color="error">
+                <Badge badgeContent={totalCartValue} color="error">
                   <ShoppingCartIcon />
                 </Badge>
               </IconButton>
